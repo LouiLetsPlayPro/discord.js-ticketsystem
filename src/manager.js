@@ -1,7 +1,14 @@
 const discord = require('discord.js')
 const enmap = require('enmap')
+
 const createticketcommands = require('./ticketcmds/createticketcommands')
+const createreportcommands = require('./reportcmds/createreportcommands')
+const createmodmailcommands = require('./modmail/createmodmailcommands')
+
 const tickethandler = require('./ticketcmds/tickethandler')
+const reporthandler = require('./reportcmds/reporthandler')
+const modmailhandler = require('./modmail/modmailhandler')
+
 
 /**
  * 
@@ -21,6 +28,9 @@ module.exports.invitemanager = (client, inviteable, logInfo, rolenames) => {
             logInfo("Neuer Server erkannt -> verlassen")
         } else if (inviteable == true) {
             this.createGuild(g)
+            if(rolenames == undefined){
+                rolenames = {admin: "Ticket Admin", supporter:"Ticket Supporter"}
+            }
             if (g.roles.cache.find(n => n.name = rolenames.admin)) { } else {
                 g.roles.create({ name: rolenames.admin, reason: "Für das Ticketsystem! NICHT LÖSCHEN" })
             }
@@ -80,6 +90,7 @@ module.exports.getdb = (dbname) => {
  * @param {boolean} options.ticket
  * @param {boolean} options.modmail
  * @param {boolean} options.voice
+ * @param {boolean} options.report
  * 
  * @param {function(message)} consoledata.log
  * @param {function(code, message)} consoledata.Error
@@ -91,16 +102,21 @@ module.exports.getdb = (dbname) => {
  * @param {function(message)} consoledata.Info
  */
 
-module.exports.startengin = (options, client, consoledata, rname, ndata) => {
+module.exports.startengin = (options, client, consoledata, rname, ndata, mdata) => {
     if (options.ticket == true) {
         createticketcommands.run(client, consoledata)
         tickethandler.run(client, consoledata, this.getdb, rname, ndata)
     }
     if (options.modmail == true) {
-
+        createmodmailcommands.run(client, consoledata)
+        modmailhandler.run(client, consoledata, this.getdb, rname, mdata)
     }
     if (options.voice == true) {
 
+    }
+    if (options.report == true) {
+        createreportcommands.run(client, consoledata)
+        reporthandler.run(client, consoledata, this.getdb)
     }
 }
 

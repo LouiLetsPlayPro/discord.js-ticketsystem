@@ -23,12 +23,14 @@ module.exports.ticketsystem = class {
      * @param {boolean} options.ticket
      * @param {boolean} options.modmail
      * @param {boolean} options.voice
+     * @param {boolean} options.report Report User oder Message
      * 
      * @param {object} options.ticketsettings
      * @param {object} options.modmailsettings
      * @param {object} options.voicesettings
      * 
      * @param {string} options.ticketsettings.ticketname Um Strings Abzufangen: ?uname? -> Username im ticketname | ?id?    -> Ticketid im ticketname | ?thema? -> Ticketthema im ticketname | -> Ticketname spiegelt den namen des Ticketchannels wieder
+     * @param {string} options.modmailsettings.ticketname Um Strings Abzufangen: ?uname? -> Username im ticketname | ?id?    -> Ticketid im ticketname | ?thema? -> Ticketthema im ticketname | -> Ticketname spiegelt den namen des Ticketchannels wieder
      * 
      * @param {String} options.status.name
      * @param {ClientPresenceStatus} options.status.type
@@ -58,7 +60,7 @@ module.exports.ticketsystem = class {
         if (!options.supporterrolename) { throw new TypeError("Keinen supporterrolename angegeben") }
         if (!options.credits) { throw new TypeError("keine credits optionen angegeben") }
         if (!options.ticket && !options.modmail && !options.voice) { throw new TypeError("Es muss mind. ein Argument (ticket, modmail, voice) definiert werden in den Optionen") }
-        if (options.ticket == false && options.modmail == false && options.voice == false) { throw new TypeError("Es muss mind. ein Argument (ticket, modmail, voice) aktiviert werden") }
+        if (options.ticket == false && options.modmail == false && options.voice == false && options.report == false) { throw new TypeError("Es muss mind. ein Argument (ticket, modmail, voice) aktiviert werden") }
         if (!options.status.activities.type && options.status.activities.type != 0 && options.status.activities.type != 1 && options.status.activities.type != 2 && options.status.activities.type != 3 && options.status.activities.type != 5) { throw new Error("Keinen Activity Type angegeben") }
         if (!options.inviteable) { options.inviteable = true }
         if (!options.credits.custom) { options.credits.custom = manager.credits }
@@ -68,9 +70,11 @@ module.exports.ticketsystem = class {
         if (!options.ticket) { options.ticket = false }
         if (!options.modmail) { options.modmail = false }
         if (!options.voice) { options.voice = false }
-        if( options.ticket == true && (!options.ticketsettings || !options.ticketsettings.ticketname)) { throw new TypeError("Keine Ticketsettings angegeben") }
+        if (!options.report) { options.report = false }
+        if (options.ticket == true && (!options.ticketsettings || !options.ticketsettings.ticketname)) { throw new TypeError("Keine Ticketsettings angegeben") }
         if( options.modmail == true && !options.modmailsettings) { throw new TypeError("Keine Modmailsettings angegeben") }
-        if( options.voice == true && !options.voicesettings) { throw new TypeError("Keine Voicesettings angegeben") }
+        if (options.voice == true && !options.voicesettings) { throw new TypeError("Keine Voicesettings angegeben") }
+        if (!client.options.partials.includes(discord.Partials.Channel)) client.options.partials.push(discord.Partials.Channel)
 
 
         logClear()
@@ -86,7 +90,7 @@ module.exports.ticketsystem = class {
 
         manager.invitemanager(client, options.inviteable, logInfo)
 
-        manager.startengin({ ticket: options.ticket, modmail: options.modmail, voice: options.voice }, client, { log: log, Error: logError, Warning: logWarning, Operation: logOperation, Status: logStatus, Clear: logClear, Table: logTable, Info: logInfo }, { admin: options.adminrolename, support: options.supporterrolename }, { fs: options.ticketsettings.ticketname })
+        manager.startengin({ ticket: options.ticket, modmail: options.modmail, voice: options.voice, report: options.report }, client, { log: log, Error: logError, Warning: logWarning, Operation: logOperation, Status: logStatus, Clear: logClear, Table: logTable, Info: logInfo }, { admin: options.adminrolename, support: options.supporterrolename }, { fs: options.ticketsettings.ticketname }, {fs: options.modmailsettings.ticketname})
 
         this.updatestatus(options.status)
 
@@ -111,11 +115,11 @@ module.exports.ticketsystem = class {
 
         //functions
         /**
-             * Logge eine einfache Nachricht
-             * @param {string} message Nachricht
-             * 
-             * @example log("Moin")
-            */
+        * Logge eine einfache Nachricht
+         * @param {string} message Nachricht
+         * 
+         * @example log("Moin")
+        */
         function log(message) {
             if (!options.customconsole) {
                 return new consoleInteraface.console(false, 0, false, false, 0).log(message)
@@ -253,28 +257,28 @@ module.exports.ticketsystem = class {
 
             if (!status.activities.url) {
                 this.client.user.setPresence({
-                    status:status.type,
-                    afk:status.afk,
-                    activities:[{
-                        name:status.name,
+                    status: status.type,
+                    afk: status.afk,
+                    activities: [{
+                        name: status.name,
                         type: status.activities.type
                     }]
                 })
             } else {
                 this.client.user.setPresence({
-                    status:status.type,
-                    afk:status.afk,
-                    activities:[{
-                        name:status.name,
+                    status: status.type,
+                    afk: status.afk,
+                    activities: [{
+                        name: status.name,
                         type: status.activities.type,
-                        url:status.activities.url
+                        url: status.activities.url
                     }]
                 })
             }
-            this.logOperation("Bot Status", "UPDATE", "finished")
+            
         })
-
-        setTimeout(() => {this.updatestatus(status)},60000)
+    this.logOperation("Bot Status", "UPDATE", "finished")
+        setTimeout(() => { this.updatestatus(status) }, 60000)
 
     }
 
