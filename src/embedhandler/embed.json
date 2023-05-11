@@ -1,0 +1,77 @@
+{
+    "reports": {
+        "title1": "Alle Reportid's des Servers / Users",
+        "title2": "Reportübersicht des Reports: ${rid}",
+        "fields": {
+            "nreports": {
+                "name": "Reports",
+                "value": "Keine Reports bis jetzt vorhanden!"
+            },
+            "reportsua": {
+                "name": "Reports Insgesammt",
+                "value": "${rlength}"
+            },
+            "reportsu": [
+                {
+                    "name": "Reporteduser",
+                    "value": "${reporteduser}\n||<@${reporteduser}>||"
+                },
+                {
+                    "name": "Reporter",
+                    "value": "${reporter}\n||<@${reporter}>||"
+                },
+                {
+                    "name": "Reason",
+                    "value": "${reason}"
+                },
+                {
+                    "name": "Zeit",
+                    "value": "${time}"
+                }
+            ],
+            "reportsm":[
+                {
+                    "name": "Reporteduser",
+                    "value": "${reporteduser}\n||<@${reporteduser}>||"
+                },
+                {
+                    "name": "Reporter",
+                    "value": "${reporter}\n||<@${reporter}>||"
+                },
+                {
+                    "name": "Message",
+                    "value": "${reportedmessage.content}\n||[Link](${reportedmessage.link})||"
+                },
+                {
+                    "name": "Zeit",
+                    "value": "${time}"
+                }
+            ]
+        },
+        "description": "**ReportID's**:\n${rids}",
+        "color": "Orange",
+        "footer": {
+            "text": "DE Netzwerk - Support Server: https://discord.gg/b5SuaEzwvG",
+            "iconURL":"https://cdn.discordapp.com/attachments/1008758904622166018/1032999513318752396/unknown.png"
+        }
+    },
+    "modmail":{
+        "color": "Aqua",
+        "footer": {
+            "text": "DE Netzwerk - Support Server: https://discord.gg/b5SuaEzwvG",
+            "iconURL":"https://cdn.discordapp.com/attachments/1008758904622166018/1032999513318752396/unknown.png"
+        },
+        "title":[
+            "Nachricht absenden" 
+        ],
+        "description":[
+            "Hallo Nutzer,\ndu hast mir eine DM gesendet welches als Modmail anfrage aufgegriffen wurde, jedoch teilst du keine (oder nicht einen bestimmten ) Server mit mir!\n\nSollte dies ein Fehler sein schreibe einmal eine Nachricht auf dem Server, auf welchem du ein Modmail Ticket öffnen möchtest",
+            "Hallo Nutzer,\nwir haben festgestellt das du bereits ein Ticket auf dem Server ``${guildname}`` offen hast, soll deine Nachricht auf dieses Ticket sein?",
+            "Hallo Nutzer,\nwir haben festgestellt das du nur auf einem Server ([${guildname}](${guildinvitelink})) von unserem Bot bist, soll dort ein Ticket für dich geöffnet werden?"
+        ]
+    },
+    "error":{
+        "title":"❌ Fehler ❌",
+        "color":"Red"
+    }
+}
